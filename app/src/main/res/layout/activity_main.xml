@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="horizontal"
+    android:weightSum="1">
+    <ca.bcit.zwu56.imagemorpher.MorphImageView
+        android:id="@+id/srcImgView"
+        android:layout_weight=".45"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+    </ca.bcit.zwu56.imagemorpher.MorphImageView>
+    <ca.bcit.zwu56.imagemorpher.MorphImageView
+        android:id="@+id/desImgView"
+        android:layout_weight=".45"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+    </ca.bcit.zwu56.imagemorpher.MorphImageView>
+</LinearLayout>
