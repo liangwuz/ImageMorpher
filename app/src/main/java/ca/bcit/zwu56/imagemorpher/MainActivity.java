@@ -4,6 +4,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     MorphImageView srcImgView, desImgView;
@@ -15,12 +18,5 @@ public class MainActivity extends AppCompatActivity {
 
         srcImgView = findViewById(R.id.srcImgView);
         desImgView = findViewById(R.id.desImgView);
-
-        Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setColor(Color.RED);
-        linePaint.setStrokeWidth(7);
-        srcImgView.setLinePaint(linePaint);
-        srcImgView.drawLine(0, 0, 100, 100);
     }
 }
