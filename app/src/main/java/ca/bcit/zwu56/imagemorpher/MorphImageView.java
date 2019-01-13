@@ -13,7 +13,48 @@ import java.util.List;
 
 public class MorphImageView extends ImageView {
     static List<MorphImageView> connectedViews = new ArrayList<>();
-    enum EditLineMode {DRAW, EDIT, REMOVE }
+    private static LineEditMode lineEditMode = LineEditMode.DRAW;
+
+    /** change how the drawn lines displaying and editing */
+    public static void setLineEditMode(LineEditMode lm) {
+        lineEditMode = lm;
+        updateLinesDrawing();
+    }
+
+    /** draw: only draw the lines.
+     * edit: draw blue circle on the endpoints
+     * delete: draw red circle on the endpoints.*/
+    private static void updateLinesDrawing() {
+        Paint circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circlePaint.setStyle(Paint.Style.STROKE);
+        circlePaint.setStrokeWidth(7);
+        circlePaint.setColor(Color.RED);
+        int circleRadius = 20;
+
+        switch (lineEditMode) {
+            case DRAW:
+                for (MorphImageView v : connectedViews) {
+                    v.clearCircles();
+                    v.invalidate();
+                }
+                break;
+            case EDIT:
+                circlePaint.setColor(Color.BLUE);
+            case DELETE:
+                for (MorphImageView v : connectedViews) {
+                    v.clearCircles();
+                    for (Line l : v.drawnLines) {
+                        v.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
+                        v.drawCircle(l.endPoint.x, l.endPoint.y, circleRadius, circlePaint);
+                    }
+                    v.invalidate();
+                }
+        }
+    }
+
+
+    public enum  LineEditMode {DRAW, EDIT, DELETE }
+
 
     private List<Line> drawnLines = new ArrayList<>();
     private Canvas usingCanvas; // @todo
@@ -34,7 +75,7 @@ public class MorphImageView extends ImageView {
         linePaint.setColor(Color.BLACK);
         linePaint.setStrokeWidth(7);
 
-        connectedViews.add(this);
+        connectedViews.add(this); // mirror action on touch event
     }
 
     @Override protected void onDraw(Canvas canvas) {
@@ -43,7 +84,7 @@ public class MorphImageView extends ImageView {
              canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
         for (Circle c : drawnCircles)
             canvas.drawCircle(c.x, c.y, c.radius, c.paint);
-        if (strPoint != null)
+        if (strPoint != null && endPoint != null)
             canvas.drawLine(strPoint.x, strPoint.y, endPoint.x, endPoint.y, linePaint);
     }
 
@@ -51,32 +92,54 @@ public class MorphImageView extends ImageView {
     private Point endPoint;
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent e) {
-        float x = e.getX(), y = e.getY();
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                for(MorphImageView view : connectedViews) {
-                    view.strPoint = new Point(x, y);
-                    view.endPoint = strPoint;
-                    view.invalidate();
+                switch (lineEditMode) {
+                    case DRAW:
+                        drawModeMouseDown(e); break;
                 }
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                for(MorphImageView view : connectedViews) {
-                    view.endPoint = new Point(x, y);
-                    view.invalidate();
+                switch (lineEditMode) {
+                    case DRAW:
+                        drawModeMouseMove(e);
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
-                for(MorphImageView view : connectedViews) {
-                    view.endPoint = new Point(x, y);
-                    view.drawnLines.add(new Line(strPoint, endPoint));
-                    view.invalidate();
+                switch (lineEditMode) {
+                    case DRAW:
+                        drawModeMouseUp(e);
                 }
                 break;
         }
         return true;
+    }
+
+    /** store the start point of the new line. */
+    private void drawModeMouseDown(MotionEvent e) {
+        for(MorphImageView view : connectedViews) {
+            view.strPoint = new Point(e.getX(), e.getY());
+            view.endPoint = strPoint;
+            view.invalidate();
+        }
+    }
+
+    /** draw the movement of the line on the fly on all imageview */
+    private void drawModeMouseMove(MotionEvent e) {
+        for(MorphImageView view : connectedViews) {
+            view.endPoint = new Point(e.getX(), e.getY());
+            view.invalidate();
+        }
+    }
+
+    /** add new line to imageview point list. */
+    private void drawModeMouseUp(MotionEvent e) {
+        for (MorphImageView view : connectedViews) {
+            view.drawLine(view.strPoint, view.endPoint);
+            view.invalidate();
+        }
     }
 
     /** line paint setter */

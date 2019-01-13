@@ -8,14 +8,61 @@
     android:weightSum="1">
     <ca.bcit.zwu56.imagemorpher.MorphImageView
         android:id="@+id/srcImgView"
-        android:layout_weight=".45"
+        android:layout_weight=".43"
         android:layout_width="0dp"
         android:layout_height="match_parent">
     </ca.bcit.zwu56.imagemorpher.MorphImageView>
     <ca.bcit.zwu56.imagemorpher.MorphImageView
         android:id="@+id/desImgView"
-        android:layout_weight=".45"
+        android:layout_weight=".43"
         android:layout_width="0dp"
         android:layout_height="match_parent">
     </ca.bcit.zwu56.imagemorpher.MorphImageView>
+    <LinearLayout
+        android:layout_weight=".14"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:focusableInTouchMode="true"
+        android:focusable="true">
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/drawRadio"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:checked="true"
+                android:onClick="lineEditModeSelect"
+                android:text="Draw Line"/>
+            <RadioButton
+                android:id="@+id/editRadio"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:onClick="lineEditModeSelect"
+                android:text="Edit Line"/>
+            <RadioButton
+                android:id="@+id/deleteRadio"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:onClick="lineEditModeSelect"
+                android:text="Remove Line"/>
+        </RadioGroup>
+        <TextView
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Intermediate Frame #"/>
+        <EditText
+            android:id="@+id/frameNum"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+        <Button
+            android:id="@+id/morphBtn"
+            android:onClick="morphBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Morph"/>
+    </LinearLayout>
 </LinearLayout>
