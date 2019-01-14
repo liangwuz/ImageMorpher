@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MorphImageView extends ImageView {
+
+    //------------ static
+
     static List<MorphImageView> connectedViews = new ArrayList<>();
     private static int lineEditMode = 0x0000000f; // default drawing
     public static final int DRAW_MODE = 0x0000000f;
@@ -22,6 +25,13 @@ public class MorphImageView extends ImageView {
     public static void setLineEditMode(int lm) {
         lineEditMode = lm;
         updateLinesDrawing();
+    }
+
+    /** clear all lines on all imageview */
+    private static void clearLines() {
+        for (MorphImageView v : connectedViews) {
+            v.clearDrawnLines();
+        }
     }
 
     private static Paint circlePaint;
@@ -41,16 +51,15 @@ public class MorphImageView extends ImageView {
                 circlePaint.setColor(Color.BLUE);
             case DELETE_MODE:
                 for (MorphImageView v : connectedViews) {
-                    v.strPoint = null; // clear the drawing line, or ondraw will show it
-                    v.endPoint = null;
                     v.invalidate();
                 }
         }
     }
 
+    //----------------------- members
+
     private List<Line> drawnLines = new ArrayList<>();
-    private Canvas usingCanvas; // @todo
-    private Bitmap originBitmap; // @todo
+    private Bitmap originBitmap; //@todo check if bitmap stay unchanged
 
     private Paint linePaint;
 
@@ -77,13 +86,13 @@ public class MorphImageView extends ImageView {
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        for (Line l : drawnLines) {
-            canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
-            if ((lineEditMode & 0x000000f0) != 0) {
-                canvas.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
-                canvas.drawCircle(l.endPoint.x, l.endPoint.y, circleRadius, circlePaint);
+            for (Line l : drawnLines) {
+                canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
+                if ((lineEditMode & 0x000000f0) != 0) {
+                    canvas.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
+                    canvas.drawCircle(l.endPoint.x, l.endPoint.y, circleRadius, circlePaint);
+                }
             }
-        }
         if (strPoint != null && endPoint != null) {
             canvas.drawLine(strPoint.x, strPoint.y, endPoint.x, endPoint.y, linePaint);
             canvas.drawCircle(strPoint.x, strPoint.y, circleRadius, circlePaint);
@@ -132,7 +141,7 @@ public class MorphImageView extends ImageView {
     private void drawModeMouseDown(MotionEvent e) {
         for(MorphImageView view : connectedViews) {
             view.strPoint = new Point(e.getX(), e.getY());
-            view.endPoint = strPoint;
+            view.endPoint = view.strPoint;
             view.invalidate();
         }
     }
@@ -187,6 +196,8 @@ public class MorphImageView extends ImageView {
     private void drawModeMouseUp(MotionEvent e) {
         for (MorphImageView view : connectedViews) {
             view.drawLine(view.strPoint, view.endPoint);
+            view.strPoint = null;
+            view.endPoint = null; // clean up
             view.invalidate();
         }
     }
@@ -289,9 +300,13 @@ public class MorphImageView extends ImageView {
         return -1;
     }
 
-    public Bitmap getOriginBitmap() { return originBitmap; }
-    public void setOriginBitmap(Bitmap b) {
-//        @todo implement setting new bitmap for drawing
+
+    public Bitmap getImageBitmap() { return originBitmap; }
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        MorphImageView.clearLines();
+        originBitmap = bm;
+        super.setImageBitmap(bm);
     }
 
     /** return the present line of this view, if the underline line are modified, the

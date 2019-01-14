@@ -10,12 +10,16 @@
         android:id="@+id/srcImgView"
         android:layout_weight=".43"
         android:layout_width="0dp"
+        android:scaleType="fitXY"
+        android:background="@color/colorPrimaryDark"
         android:layout_height="match_parent">
     </ca.bcit.zwu56.imagemorpher.MorphImageView>
     <ca.bcit.zwu56.imagemorpher.MorphImageView
         android:id="@+id/desImgView"
         android:layout_weight=".43"
         android:layout_width="0dp"
+        android:scaleType="fitXY"
+        android:background="@color/colorAccent"
         android:layout_height="match_parent">
     </ca.bcit.zwu56.imagemorpher.MorphImageView>
     <LinearLayout
@@ -25,7 +29,18 @@
         android:orientation="vertical"
         android:focusableInTouchMode="true"
         android:focusable="true">
-
+        <Button
+            android:id="@+id/openSrcImgBtn"
+            android:onClick="openImageClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OPen Src Image"/>
+        <Button
+            android:id="@+id/openDesImgBtn"
+            android:onClick="openImageClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OPen Dest Image"/>
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
