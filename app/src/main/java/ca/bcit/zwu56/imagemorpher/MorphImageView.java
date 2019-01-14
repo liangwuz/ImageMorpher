@@ -13,48 +13,40 @@ import java.util.List;
 
 public class MorphImageView extends ImageView {
     static List<MorphImageView> connectedViews = new ArrayList<>();
-    private static LineEditMode lineEditMode = LineEditMode.DRAW;
+    private static int lineEditMode = 0x0000000f; // default drawing
+    public static final int DRAW_MODE = 0x0000000f;
+    public static final int EDIT_MODE = 0x000000ff;
+    public static final int DELETE_MODE = 0x000000fe;
 
     /** change how the drawn lines displaying and editing */
-    public static void setLineEditMode(LineEditMode lm) {
+    public static void setLineEditMode(int lm) {
         lineEditMode = lm;
         updateLinesDrawing();
     }
 
+    private static Paint circlePaint;
+    private static int circleRadius = 20;
     /** draw: only draw the lines.
      * edit: draw blue circle on the endpoints
      * delete: draw red circle on the endpoints.*/
     private static void updateLinesDrawing() {
-        Paint circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circlePaint.setStyle(Paint.Style.STROKE);
-        circlePaint.setStrokeWidth(7);
         circlePaint.setColor(Color.RED);
-        int circleRadius = 20;
-
         switch (lineEditMode) {
-            case DRAW:
+            case DRAW_MODE:
                 for (MorphImageView v : connectedViews) {
-                    v.clearCircles();
                     v.invalidate();
                 }
                 break;
-            case EDIT:
+            case EDIT_MODE:
                 circlePaint.setColor(Color.BLUE);
-            case DELETE:
+            case DELETE_MODE:
                 for (MorphImageView v : connectedViews) {
-                    v.clearCircles();
-                    for (Line l : v.drawnLines) {
-                        v.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
-                        v.drawCircle(l.endPoint.x, l.endPoint.y, circleRadius, circlePaint);
-                    }
+                    v.strPoint = null; // clear the drawing line, or ondraw will show it
+                    v.endPoint = null;
                     v.invalidate();
                 }
         }
     }
-
-
-    public enum  LineEditMode {DRAW, EDIT, DELETE }
-
 
     private List<Line> drawnLines = new ArrayList<>();
     private Canvas usingCanvas; // @todo
@@ -75,17 +67,28 @@ public class MorphImageView extends ImageView {
         linePaint.setColor(Color.BLACK);
         linePaint.setStrokeWidth(7);
 
+        circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circlePaint.setStyle(Paint.Style.STROKE);
+        circlePaint.setColor(Color.RED);
+        circlePaint.setStrokeWidth(7);
+
         connectedViews.add(this); // mirror action on touch event
     }
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        for (Line l : drawnLines)
-             canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
-        for (Circle c : drawnCircles)
-            canvas.drawCircle(c.x, c.y, c.radius, c.paint);
-        if (strPoint != null && endPoint != null)
+        for (Line l : drawnLines) {
+            canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
+            if ((lineEditMode & 0x000000f0) != 0) {
+                canvas.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
+                canvas.drawCircle(l.endPoint.x, l.endPoint.y, circleRadius, circlePaint);
+            }
+        }
+        if (strPoint != null && endPoint != null) {
             canvas.drawLine(strPoint.x, strPoint.y, endPoint.x, endPoint.y, linePaint);
+            canvas.drawCircle(strPoint.x, strPoint.y, circleRadius, circlePaint);
+            canvas.drawCircle(endPoint.x, endPoint.y, circleRadius, circlePaint);
+        }
     }
 
     private Point strPoint; // current drawing line start point
@@ -95,22 +98,30 @@ public class MorphImageView extends ImageView {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 switch (lineEditMode) {
-                    case DRAW:
+                    case DRAW_MODE:
                         drawModeMouseDown(e); break;
+                    case EDIT_MODE:
+                        editMouseDown(e); break;
+                    case DELETE_MODE:
+                        deleteMouseDown(e); break;
                 }
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 switch (lineEditMode) {
-                    case DRAW:
-                        drawModeMouseMove(e);
+                    case DRAW_MODE:
+                        drawModeMouseMove(e); break;
+                    case EDIT_MODE:
+                        editMouseMove(e); break;
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
                 switch (lineEditMode) {
-                    case DRAW:
-                        drawModeMouseUp(e);
+                    case DRAW_MODE:
+                        drawModeMouseUp(e); break;
+                    case EDIT_MODE:
+                        editMouseUp(e); break;
                 }
                 break;
         }
@@ -126,6 +137,39 @@ public class MorphImageView extends ImageView {
         }
     }
 
+    private int editLineIndex;
+    private Line editLine;
+    private Point editPoint;
+    /** when click on a valid line, remove this line from the list, and store its origin location.
+     * when the mouse release, place back the edited line. */
+    private void editMouseDown(MotionEvent e) {
+        Point clickedPoint = new Point(e.getX(), e.getY());
+        editLineIndex = getLineIndex(clickedPoint, circleRadius);
+        if (editLineIndex == -1)
+            return;
+
+        editLine = drawnLines.remove(editLineIndex);
+        if (editLine.strPoint.equalsWithDeviation(clickedPoint, circleRadius)) {
+            editPoint = editLine.strPoint;
+            strPoint = editLine.endPoint;
+        } else {
+            editPoint = editLine.endPoint;
+            strPoint = editLine.strPoint;
+        }
+        endPoint = strPoint;
+        invalidate();
+    }
+
+    /** delete the clicked line */
+    private void deleteMouseDown(MotionEvent e) {
+        int index = getLineIndex(e.getX(), e.getY(), circleRadius);
+        if (index != -1)
+            for (MorphImageView view : connectedViews) {
+                view.drawnLines.remove(index); // remove the line
+                view.invalidate();
+            }
+    }
+
     /** draw the movement of the line on the fly on all imageview */
     private void drawModeMouseMove(MotionEvent e) {
         for(MorphImageView view : connectedViews) {
@@ -134,12 +178,27 @@ public class MorphImageView extends ImageView {
         }
     }
 
+    private void editMouseMove(MotionEvent e) {
+        endPoint = new Point(e.getX(), e.getY());
+        invalidate();
+    }
+
     /** add new line to imageview point list. */
     private void drawModeMouseUp(MotionEvent e) {
         for (MorphImageView view : connectedViews) {
             view.drawLine(view.strPoint, view.endPoint);
             view.invalidate();
         }
+    }
+
+    private void editMouseUp(MotionEvent e) {
+        if (editLineIndex == -1)
+            return;
+        editPoint.setPoint(e.getX(), e.getY());
+        drawnLines.add(editLineIndex, editLine);
+        strPoint = null;
+        endPoint = null;
+        invalidate();
     }
 
     /** line paint setter */
@@ -214,10 +273,20 @@ public class MorphImageView extends ImageView {
     }
 
     public Line getLine(Point point, float deviation) {
-        for (Line l : drawnLines)
-            if (l.containsWithDeviation(point, deviation))
-                return l;
-        return null;
+        int index = getLineIndex(point, deviation);
+        return index == -1 ? null : drawnLines.get(index);
+    }
+
+    public int getLineIndex(float x, float y, float deviation) {
+        return getLineIndex(new Point(x, y), deviation);
+    }
+
+    /** get index of the line with the specified endpoint */
+    public int getLineIndex(Point point, float deviation) {
+        for (int i = 0; i < drawnLines.size(); ++i)
+            if (drawnLines.get(i).containsWithDeviation(point, deviation))
+                return i;
+        return -1;
     }
 
     public Bitmap getOriginBitmap() { return originBitmap; }
@@ -230,11 +299,4 @@ public class MorphImageView extends ImageView {
     public List<Line> getDrawnLines() { return drawnLines; }
     public void setDrawnLines(List<Line> lines) { drawnLines = lines; }
     public void clearDrawnLines() { drawnLines.clear(); }
-
-
-    private final List<Circle> drawnCircles = new ArrayList<>();
-    public void drawCircle(float x, float y, float radius, Paint paint) {
-        drawnCircles.add(new Circle(x, y, radius, paint));
-    }
-    public void clearCircles() { drawnCircles.clear(); }
 }

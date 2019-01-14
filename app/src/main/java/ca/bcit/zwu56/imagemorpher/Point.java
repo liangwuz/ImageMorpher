@@ -1,11 +1,16 @@
 package ca.bcit.zwu56.imagemorpher;
 
 public class Point {
-    final float x, y;
+    float x, y;
 
     public Point(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void setPoint(float X, float Y) {
+        x = X;
+        y = Y;
     }
 
     /** return true if the specified point is with the radius of deviation of this point. */

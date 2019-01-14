@@ -26,13 +26,13 @@ public class MainActivity extends AppCompatActivity {
     public void lineEditModeSelect(View view) {
         switch (view.getId()) {
             case R.id.drawRadio:
-                MorphImageView.setLineEditMode(MorphImageView.LineEditMode.DRAW);
+                MorphImageView.setLineEditMode(MorphImageView.DRAW_MODE);
                 break;
             case R.id.editRadio:
-                MorphImageView.setLineEditMode(MorphImageView.LineEditMode.EDIT);
+                MorphImageView.setLineEditMode(MorphImageView.EDIT_MODE);
                 break;
             case R.id.deleteRadio:
-                MorphImageView.setLineEditMode(MorphImageView.LineEditMode.DELETE);
+                MorphImageView.setLineEditMode(MorphImageView.DELETE_MODE);
                 break;
         }
     }

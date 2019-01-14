@@ -6,12 +6,10 @@ public class Circle {
     final float x;
     final float y;
     final float radius;
-    final Paint paint;
 
-    Circle(float x, float y, float radius, Paint paint) {
+    Circle(float x, float y, float radius) {
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.paint = paint;
     }
 }
