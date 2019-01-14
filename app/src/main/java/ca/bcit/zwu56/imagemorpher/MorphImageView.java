@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.*;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 
@@ -35,7 +34,7 @@ public class MorphImageView extends ImageView {
     }
 
     private static Paint circlePaint;
-    private static int circleRadius = 20;
+    private static int circleRadius = 40;
     /** draw: only draw the lines.
      * edit: draw blue circle on the endpoints
      * delete: draw red circle on the endpoints.*/
@@ -212,16 +211,6 @@ public class MorphImageView extends ImageView {
         invalidate();
     }
 
-    /** line paint setter */
-    public void setLinePaint(Paint paint) { linePaint = paint; }
-    /** return a copy of the line paint */
-    public Paint getLinePaint() { return new Paint(linePaint); }
-
-    /** draw new line using chosen paint */
-    public void drawLine(float x0, float y0, float x1, float y1) {
-        drawLine(new Point(x0, y0), new Point(x1, y1));
-    }
-
     public void drawLine(Point start, Point end) {
         drawLine(new Line(start, end));
     }
@@ -230,64 +219,8 @@ public class MorphImageView extends ImageView {
         drawnLines.add(line);
     }
 
-    /** remove the line start from (x0, y0) and end at (x1, y1), with the deviation radius,
-     * if there are multiple lines, only the first qualified line is removed */
-    public void removeLine(float x0, float y0, float x1, float y1, float deviation) {
-        drawnLines.remove(getLine(x0, y0, x1, y1, deviation));
-    }
-
-    public void removeLine(Point str, Point end, float deviation) {
-        drawnLines.remove(getLine(str, end, deviation));
-    }
-
-    /** remove the line with an end point at (x, y) within deviation radius,
-     * if there are multiple lines, only the first qualified line is removed */
-    public void removeLine(float x, float y, float deviation) {
-        drawnLines.remove(getLine(x, y, deviation));
-    }
-
-    public void removeLine(Point point, float deviation) {
-        drawnLines.remove(getLine(point, deviation));
-    }
-
-    public void removeLine(Line ol, float deviation) {
-        for (Line l : drawnLines)
-            if (l.equalsWithDeviation(ol, deviation)) {
-                drawnLines.remove(l);
-                return;
-            }
-    }
-
-    /** remove the specified line. */
-    public void removeLine(Line l) {
-        drawnLines.remove(l);
-    }
-
-    /** return the line start from (x0, y0) and end at (x1, y1), with the deviation radius or
-     * null is return, if there are multiple lines, only the first qualified line is returned */
-    public Line getLine(float x0, float y0, float x1, float y1, float deviation) {
-        return getLine(new Point(x0, y0), new Point(x1, y1), deviation);
-    }
-
-    public Line getLine(Point start, Point end, float deviation) {
-        Line check = new Line(start, end);
-        for (Line l : drawnLines)
-            if (l.equalsWithDeviation(check, deviation))
-                return l;
-        return null;
-    }
-
-    /** return the line contains end Point (x0, y0), with the deviation radius,
+    /** return the index of the line include point (x, y), with the deviation radius or -1 is return.
      * if there are multiple lines, only the first qualified line is returned */
-    public Line getLine(float x, float y, float deviation) {
-        return getLine(new Point(x, y), deviation);
-    }
-
-    public Line getLine(Point point, float deviation) {
-        int index = getLineIndex(point, deviation);
-        return index == -1 ? null : drawnLines.get(index);
-    }
-
     public int getLineIndex(float x, float y, float deviation) {
         return getLineIndex(new Point(x, y), deviation);
     }
@@ -299,7 +232,6 @@ public class MorphImageView extends ImageView {
                 return i;
         return -1;
     }
-
 
     public Bitmap getImageBitmap() { return originBitmap; }
     @Override
