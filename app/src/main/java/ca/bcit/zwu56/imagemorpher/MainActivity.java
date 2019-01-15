@@ -4,41 +4,40 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.ParcelFormatException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    MorphImageView srcImgView, desImgView;
+    /** two image containers */
+    MorphImageView strImgView, endImgView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        srcImgView = findViewById(R.id.srcImgView);
-        desImgView = findViewById(R.id.desImgView);
+
+        strImgView = findViewById(R.id.srcImgView);
+        endImgView = findViewById(R.id.desImgView);
     }
 
-    private final int srcImgRequestCode = 0;
-    private final int destImgRequestCode = 1;
-    /** open image for morphing */
+    /** request code for distinct where to put the opened image */
+     final int
+            strImgRequestCode = 0,
+            endImgRequestCode = 1;
+
+    /** open image picker */
     public void openImageClick(View view) {
         int requestCode;
         switch (view.getId()) {
             case R.id.openSrcImgBtn:
-                requestCode = srcImgRequestCode;
+                requestCode = strImgRequestCode;
                 break;
             case R.id.openDesImgBtn:
-                requestCode = destImgRequestCode;
+                requestCode = endImgRequestCode;
                 break;
             default:
                 throw new UnsupportedOperationException("only src and dest will be clicked");
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode != RESULT_OK)
             return;
 
-        MorphImageView view = pickImageViewContainer(requestCode);
+        MorphImageView imgContainer = pickImageViewContainer(requestCode);
         try {
             //Immutable bitmap cannot be passed to Canvas constructor
             Bitmap immuBitmap = BitmapFactory.decodeStream(
@@ -75,18 +74,22 @@ public class MainActivity extends AppCompatActivity {
 
             Canvas canvas = new Canvas(bitmap);
             canvas.drawBitmap(immuBitmap, 0, 0, null);
-            view.setImageBitmap(bitmap);
+            imgContainer.setImageBitmap(bitmap);
 
         } catch (FileNotFoundException e) {}
     }
 
-    /** based on the request code to return corresponding imageview */
+    /**
+     * based on the request code to return the correct ImageView container (str or end)
+     * @param requestCode strImgRequestCode or endImgRequestCode
+     * @return strImgView or endImgView
+     */
     private MorphImageView pickImageViewContainer(int requestCode) {
         switch (requestCode){
-            case srcImgRequestCode:
-                return srcImgView;
-            case destImgRequestCode:
-                return desImgView;
+            case strImgRequestCode:
+                return strImgView;
+            case endImgRequestCode:
+                return endImgView;
             default:
                 throw new UnsupportedOperationException("only src and dest will load image");
         }
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /** start morphing */
     public void morphBtnClick(View view) {
         try {
             int frames = Integer.parseInt(((EditText)findViewById(R.id.frameNum)).getText().toString());
