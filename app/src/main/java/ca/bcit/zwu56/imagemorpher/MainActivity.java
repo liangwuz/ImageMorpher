@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +14,9 @@ import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity {
     /** two image containers */
-    MorphImageView strImgView, endImgView;
+    private MorphImageView strImgView, endImgView;
+    /** start and end image dimension */
+    private int imgWidth, imgHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +69,19 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 config = Bitmap.Config.ARGB_8888;
             }
+
+            // Android does not have onLoaeded event, i have no idea when to init these.
+            imgWidth = strImgView.getWidth();
+            imgHeight = strImgView.getHeight();
             // Mutable bitmap for drawing
             Bitmap bitmap = Bitmap.createBitmap(
-                    immuBitmap.getWidth(),
-                    immuBitmap.getHeight(),
+                    imgWidth,
+                    imgHeight,
                     config);
 
             Canvas canvas = new Canvas(bitmap);
-            canvas.drawBitmap(immuBitmap, 0, 0, null);
+            Rect dest = new Rect(0,0, imgWidth, imgHeight);
+            canvas.drawBitmap(immuBitmap, null, dest, null);
             imgContainer.setImageBitmap(bitmap);
 
         } catch (FileNotFoundException e) {}
