@@ -60,7 +60,7 @@ public class MorphImageView extends ImageView {
     //----------------------- members
 
     /** all drawn line of this view */
-    private List<Line> drawnLines = new ArrayList<>();
+    private List<Vector> drawnLines = new ArrayList<>();
     /** image bitmap */
     private Bitmap originBitmap; //@todo check if bitmap stay unchanged
     /** paint for drawing lines */
@@ -91,7 +91,7 @@ public class MorphImageView extends ImageView {
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-            for (Line l : drawnLines) { // draw all stored lines
+            for (Vector l : drawnLines) { // draw all stored lines
                 canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
                 if ((lineEditMode & 0x000000f0) != 0) { // draw circle to indicate edition is allowed
                     canvas.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
@@ -155,7 +155,7 @@ public class MorphImageView extends ImageView {
     /** remember the location of the editing line, when finish editing, put the line back to correct location
      * to line up with other views. */
     private int editLineIndex;
-    private Line editLine;
+    private Vector editLine;
     /** editing point to be changed coordinates. */
     private Point editPoint;
     /** when click on a valid line, remove this line from the list, and store its origin location.
@@ -229,11 +229,11 @@ public class MorphImageView extends ImageView {
      * draw this line by putting it into the line list, and onDraw method will draw it.
      * @param line to be added
      */
-    public void drawLine(Line line) {
+    public void drawLine(Vector line) {
         drawnLines.add(line);
     }
     public void drawLine(Point start, Point end) {
-        drawLine(new Line(start, end));
+        drawLine(new Vector(start, end));
     }
 
     /**
@@ -272,14 +272,14 @@ public class MorphImageView extends ImageView {
      * if the lines in this reference is modified, the lines of this view will be modified as well
      * @return reference to all drawn lines
      */
-    public List<Line> getDrawnLines() { return drawnLines; }
+    public List<Vector> getDrawnLines() { return drawnLines; }
 
     /**
      * set new lines for this view, the view will not be update immediately, invalidate method need
      * to be called
      * @param lines new lines to be drawn on this view
      */
-    public void setDrawnLines(List<Line> lines) { drawnLines = lines; }
+    public void setDrawnLines(List<Vector> lines) { drawnLines = lines; }
 
     /**
      * Remove all drawn lines, the view will not be update immediately, invalidate method need

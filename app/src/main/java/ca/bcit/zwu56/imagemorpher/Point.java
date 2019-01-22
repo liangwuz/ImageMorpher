@@ -9,6 +9,32 @@ public class Point {
     }
 
     /**
+     * add the specified vector
+     * @param vector to be added
+     * @return this point after addition
+     */
+    public Point add(Vector vector) {
+        x += vector.x;
+        y += vector.y;
+        return this;
+    }
+
+    /**
+     * add the specified vector
+     * @param vector to be subtracted
+     * @return this point after subtraction
+     */
+    public Point subtract(Vector vector) {
+        x -= vector.x;
+        y -= vector.y;
+        return this;
+    }
+
+    public String toString() {
+        return "("+ x + "," + y + ")";
+    }
+
+    /**
      * Reset x, y of this point
      * @param X
      * @param Y
