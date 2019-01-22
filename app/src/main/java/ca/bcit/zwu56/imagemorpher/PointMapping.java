@@ -1,5 +1,12 @@
 package ca.bcit.zwu56.imagemorpher;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class PointMapping {
@@ -63,13 +70,19 @@ public class PointMapping {
             Point xp = srcVector.strPoint.add(srcVector).subtract(normal);
 
             if (fractionalOffset < 0) {
+                double delX = dstPoint.x - dstVectors.get(i).strPoint.x;
+                double delY = dstPoint.y - dstVectors.get(i).strPoint.y;
                 // distance is to the start point
+               distanceToLine = Math.sqrt(delX * delX + delY * delY);
             } else if (fractionalOffset > 1) {
                 // distance is to the end point
+                double delX = dstPoint.x - dstVectors.get(i).endPoint.x;
+                double delY = dstPoint.y - dstVectors.get(i).endPoint.y;
+                distanceToLine = Math.sqrt(delX * delX + delY * delY);
             }
 
             // the weight of this source point
-            double weight = Math.pow(1.0 / (0.01 + distanceToLine) , 1);
+            double weight = Math.pow(1.0 / (0.01 + distanceToLine) , 2);
             weightSum += weight;
             // delta  = dest - src
             Vector delta = new Vector(xp, dstPoint);
@@ -77,7 +90,97 @@ public class PointMapping {
             deltaSum.add(delta);
         }
         deltaSum.magnify(1.0 / weightSum);
-        return dstPoint.subtract(deltaSum);
+        return (new Point(dstPoint)).subtract(deltaSum);
     }
 
+    public static List<Bitmap> drawIntermediateFrames(int numOfFrame, Bitmap srcImg, Bitmap dstImg,
+                                                      List<Vector> srcLines, List<Vector> dstLines) {
+        int x,y, width = srcImg.getWidth(), height = srcImg.getHeight();
+        Point lineStrPoint, lineEndPoint;
+        Vector srcLine, dstLine;
+        List<Vector> intermediateLines =  new ArrayList<>();
+        // result bitmap container
+        List<Bitmap> result = new ArrayList<>();
+
+        for (int i = 0; i < numOfFrame; ++i) {
+            double dstWeight = 1.0 / (numOfFrame + 1);
+            double srcWeight = 1 - dstWeight;
+
+            // create numOfFrame empty bitmap
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+
+            // create intermediate lines
+            for (int j = 0; j < srcLines.size(); ++j) {
+                srcLine = srcLines.get(j);
+                dstLine = dstLines.get(j);
+
+                // intermediate line start point
+                x = calIntermediateNum(srcLine.strPoint.x, dstLine.strPoint.x, i, numOfFrame);
+                y = calIntermediateNum(srcLine.strPoint.y, dstLine.strPoint.y, i, numOfFrame);
+                lineStrPoint = new Point(x, y);
+
+                // intermediate line end point
+                x = calIntermediateNum(srcLine.endPoint.x, dstLine.endPoint.x, i, numOfFrame);
+                y = calIntermediateNum(srcLine.endPoint.y, dstLine.endPoint.y, i, numOfFrame);
+                lineEndPoint = new Point(x, y);
+                intermediateLines.add(new Vector(lineStrPoint, lineEndPoint));
+            }
+
+            // for each pixel in the empty bitmap do:
+            // get corresponding pixel from the src image
+            // get corresponding pixel from the end image
+            // weight * src pixel + weight * dst pixel fro cross resolve
+            // draw the point the the result pixel
+            for (x = 0; x < width; ++x) {
+                for(y = 0; y < height; ++y) {
+                    Point pixelPoint = new Point(x, y);
+                    Point srcImgPoint = inverseMapping(srcLines, intermediateLines, pixelPoint);
+                    Point dstImgPoint = inverseMapping(dstLines, intermediateLines, pixelPoint);
+
+                    int a = 0, r = 0, g = 0, b = 0;
+
+                    int pixel = getPixelAtPoint(srcImg, srcImgPoint);
+                    a += Color.alpha(pixel) * srcWeight;
+                    a =255;
+                    r += Color.red(pixel) * srcWeight;
+                    g += Color.green(pixel) * srcWeight;
+                    b += Color.blue(pixel) * srcWeight;
+//                    pixel = getPixelAtPoint(dstImg, dstImgPoint);
+//                    a += Color.alpha(pixel) * dstWeight;
+//                    r += Color.red(pixel) * dstWeight;
+//                    g += Color.green(pixel) * dstWeight;
+//                    b += Color.blue(pixel) * dstWeight;
+
+                    int color = Color.argb(a, r, g, b);
+                    Paint paint = new Paint();
+                    paint.setColor(color);
+                    canvas.drawPoint(x, y, paint);
+                }
+            }
+
+            result.add(bitmap);
+        }
+        return result;
+    }
+
+    private static int calIntermediateNum(float src, float dst, int index, int total) {
+         return Math.round((dst - src) / (total + 1) * (index+1) + src);
+    }
+
+    private static int getPixelAtPoint(Bitmap img, Point point) {
+        int x = (int)point.x, y = (int)point.y, width = img.getWidth(), height = img.getHeight();
+
+        if (x < 0)
+            x = 0;
+        else if (x >= width)
+            x = width-1;
+
+        if (y < 0)
+            y = 0;
+        else if (y >= height)
+            y = height-1;
+
+        return img.getPixel(x, y);
+    }
 }

@@ -8,6 +8,11 @@ public class Point {
         this.y = y;
     }
 
+    Point(Point op) {
+        x = op.x;
+        y = op.y;
+    }
+
     /**
      * add the specified vector
      * @param vector to be added
@@ -31,7 +36,7 @@ public class Point {
     }
 
     public String toString() {
-        return "("+ x + "," + y + ")";
+        return "("+ x + ", " + y + ")";
     }
 
     /**

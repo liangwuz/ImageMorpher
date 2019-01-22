@@ -44,8 +44,8 @@ public class Vector {
      * @param ol other line to be copied
      */
     public Vector(Vector ol) {
-        strPoint = ol.strPoint;
-        endPoint = ol.endPoint;
+        strPoint = new Point(ol.strPoint);
+        endPoint = new Point(ol.endPoint);
         x = ol.x;
         y = ol.y;
     }
@@ -127,6 +127,6 @@ public class Vector {
     }
 
     public String toString() {
-        return "("+ x + "," + y + ")";
+        return "("+ x + ", " + y + ")";
     }
 }

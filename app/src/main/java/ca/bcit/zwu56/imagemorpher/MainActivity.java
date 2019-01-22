@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     /** two image containers */
@@ -121,8 +122,12 @@ public class MainActivity extends AppCompatActivity {
     /** start morphing */
     public void morphBtnClick(View view) {
         try {
-            int frames = Integer.parseInt(((EditText)findViewById(R.id.frameNum)).getText().toString());
-//            @todo implement morphing function
+            //int frames = Integer.parseInt(((EditText)findViewById(R.id.frameNum)).getText().toString());
+
+            List<Bitmap> imges = PointMapping.drawIntermediateFrames(1, strImgView.getImageBitmap(),
+                    endImgView.getImageBitmap(), strImgView.getDrawnLines(), endImgView.getDrawnLines());
+            endImgView.setImageBitmap(imges.get(0));
+            endImgView.invalidate();
         } catch (NumberFormatException ex) {}
     }
 }
