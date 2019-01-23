@@ -1,4 +1,4 @@
-package ca.bcit.zwu56.imagemorpher;
+package ca.bcit.zwu56.ImageMorph;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import java.util.ArrayList;
 import java.util.List;
 
-class PointMapping {
+class ImageMorph {
 
     /**
      * get the distance from the specified point to the vector.

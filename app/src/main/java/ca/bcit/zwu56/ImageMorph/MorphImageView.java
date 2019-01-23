@@ -1,4 +1,4 @@
-package ca.bcit.zwu56.imagemorpher;
+package ca.bcit.zwu56.ImageMorph;
 
 import android.content.Context;
 import android.graphics.*;
@@ -91,13 +91,13 @@ public class MorphImageView extends ImageView {
 
     @Override protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-            for (Vector l : drawnLines) { // draw all stored lines
-                canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
-                if ((lineEditMode & 0x000000f0) != 0) { // draw circle to indicate edition is allowed
-                    canvas.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
-                    canvas.drawCircle(l.endPoint.x, l.endPoint.y, circleRadius, circlePaint);
-                }
+        for (Vector l : drawnLines) { // draw all stored lines
+            canvas.drawLine(l.strPoint.x, l.strPoint.y, l.endPoint.x, l.endPoint.y, linePaint);
+            if ((lineEditMode & 0x000000f0) != 0) { // draw circle to indicate edition is allowed
+                canvas.drawCircle(l.strPoint.x, l.strPoint.y, circleRadius, circlePaint);
+                canvas.drawCircle(l.endPoint.x, l.endPoint.y, circleRadius, circlePaint);
             }
+        }
         if (strPoint != null && endPoint != null) { // the line the user is drawing / editing
             canvas.drawLine(strPoint.x, strPoint.y, endPoint.x, endPoint.y, linePaint);
             canvas.drawCircle(strPoint.x, strPoint.y, circleRadius, circlePaint);

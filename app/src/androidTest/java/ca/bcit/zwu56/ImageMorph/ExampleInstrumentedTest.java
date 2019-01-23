@@ -1,4 +1,4 @@
-package ca.bcit.zwu56.imagemorpher;
+package ca.bcit.zwu56.ImageMorph;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("ca.bcit.zwu56.imagemorpher", appContext.getPackageName());
+        assertEquals("ca.bcit.zwu56.tabprojecttest", appContext.getPackageName());
     }
 }

@@ -1,4 +1,4 @@
-package ca.bcit.zwu56.imagemorpher;
+package ca.bcit.zwu56.ImageMorph;
 
 public class Vector {
 
