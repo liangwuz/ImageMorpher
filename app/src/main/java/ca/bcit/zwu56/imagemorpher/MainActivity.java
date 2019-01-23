@@ -122,12 +122,10 @@ public class MainActivity extends AppCompatActivity {
     /** start morphing */
     public void morphBtnClick(View view) {
         try {
-            //int frames = Integer.parseInt(((EditText)findViewById(R.id.frameNum)).getText().toString());
+            int frames = Integer.parseInt(((EditText)findViewById(R.id.frameNum)).getText().toString());
 
-            List<Bitmap> images = PointMapping.drawIntermediateFrames(1, strImgView.getImageBitmap(),
+            List<Bitmap> images = PointMapping.drawIntermediateFrames(frames, strImgView.getImageBitmap(),
                     endImgView.getImageBitmap(), strImgView.getDrawnLines(), endImgView.getDrawnLines());
-            endImgView.setImageBitmap(images.get(0));
-            endImgView.invalidate();
-        } catch (NumberFormatException ex) {}
+        } catch (Exception ex) {}
     }
 }

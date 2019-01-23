@@ -62,7 +62,7 @@ public class MorphImageView extends ImageView {
     /** all drawn line of this view */
     private List<Vector> drawnLines = new ArrayList<>();
     /** image bitmap */
-    private Bitmap originBitmap; //@todo check if bitmap stay unchanged
+    private Bitmap originBitmap;
     /** paint for drawing lines */
     private Paint linePaint;
 

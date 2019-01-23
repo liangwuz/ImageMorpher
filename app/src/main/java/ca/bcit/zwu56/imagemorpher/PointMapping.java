@@ -159,7 +159,16 @@ class PointMapping {
         dstDeltaSum.magnify(1.0 / weightSum);
         dstMapPoint = (new Point(point).subtract(dstDeltaSum));
     }
-    
+
+    /**
+     * calculate and return the specified number of frames based on the provided lines and images
+     * @param numOfFrame number of intermediate between start and end images
+     * @param srcImg start image
+     * @param dstImg end image
+     * @param srcLines lines on the start image
+     * @param dstLines paired lines on the end iamge
+     * @return list of intermediate frames
+     */
     static List<Bitmap> drawIntermediateFrames(int numOfFrame, Bitmap srcImg, Bitmap dstImg,
                                                       List<Vector> srcLines, List<Vector> dstLines) {
         // x, y coordinates of a point and image size
@@ -171,7 +180,7 @@ class PointMapping {
 
         for (int i = 0; i < numOfFrame; ++i) {
             // cross resolve weight for the start image and end image
-            double dstWeight = 1.0 / (numOfFrame + 1);
+            double dstWeight = 1.0 / (numOfFrame + 1) * (i + 1);
             double srcWeight = 1 - dstWeight;
 
             // create numOfFrame empty intermediate bitmap / images
@@ -220,11 +229,11 @@ class PointMapping {
                     b += Color.blue(pixel) * srcWeight;
 
                     // pixel value from end image
-//                    pixel = getPixelAtPoint(dstImg, dstMapPoint);
-//                    a += Color.alpha(pixel) * dstWeight;
-//                    r += Color.red(pixel) * dstWeight;
-//                    g += Color.green(pixel) * dstWeight;
-//                    b += Color.blue(pixel) * dstWeight;
+                    pixel = getPixelAtPoint(dstImg, dstMapPoint);
+                    a += Color.alpha(pixel) * dstWeight;
+                    r += Color.red(pixel) * dstWeight;
+                    g += Color.green(pixel) * dstWeight;
+                    b += Color.blue(pixel) * dstWeight;
 
                     Paint paint = new Paint();
                     paint.setColor(Color.argb(a, r, g, b));
