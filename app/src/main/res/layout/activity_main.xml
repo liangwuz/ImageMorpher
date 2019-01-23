@@ -17,7 +17,7 @@
         android:id="@+id/desImgView"
         android:layout_weight=".43"
         android:layout_width="0dp"
-        android:background="@color/colorAccent"
+        android:background="@color/colorPrimaryDark"
         android:layout_height="match_parent">
     </ca.bcit.zwu56.imagemorpher.MorphImageView>
     <LinearLayout

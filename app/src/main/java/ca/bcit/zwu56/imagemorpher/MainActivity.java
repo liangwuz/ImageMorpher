@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             //int frames = Integer.parseInt(((EditText)findViewById(R.id.frameNum)).getText().toString());
 
-            List<Bitmap> imges = PointMapping.drawIntermediateFrames(1, strImgView.getImageBitmap(),
+            List<Bitmap> images = PointMapping.drawIntermediateFrames(1, strImgView.getImageBitmap(),
                     endImgView.getImageBitmap(), strImgView.getDrawnLines(), endImgView.getDrawnLines());
-            endImgView.setImageBitmap(imges.get(0));
+            endImgView.setImageBitmap(images.get(0));
             endImgView.invalidate();
         } catch (NumberFormatException ex) {}
     }
