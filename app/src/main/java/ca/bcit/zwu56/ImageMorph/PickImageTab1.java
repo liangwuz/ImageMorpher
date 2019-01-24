@@ -17,9 +17,9 @@ import java.util.List;
 
 public class PickImageTab1 extends Fragment {
 
-    View rootView;
+    private View rootView;
     /** two image containers */
-    MorphImageView strImgView, endImgView;
+    private MorphImageView strImgView, endImgView;
     private ProgressBar morphingBar;
     private Button morphBtn;
     /** start and end image dimension */
@@ -124,7 +124,7 @@ public class PickImageTab1 extends Fragment {
         morphingBar.setVisibility(View.VISIBLE);
         morphBtn.setEnabled(false);
 
-        //
+        // use different for calculation, so the ui button and spinner can be updated
         new AsyncTask<Void, Void, Void>() {
             List<Bitmap> images;
             @Override
@@ -134,7 +134,9 @@ public class PickImageTab1 extends Fragment {
 
                     images = ImageMorph.drawIntermediateFrames(frames, strImgView.getImageBitmap(),
                             endImgView.getImageBitmap(), strImgView.getDrawnLines(), endImgView.getDrawnLines());
-                } catch (NumberFormatException ex) {}
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 return null;
             }
 

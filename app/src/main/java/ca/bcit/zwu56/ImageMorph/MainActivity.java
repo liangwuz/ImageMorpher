@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
                     pickImageTab = new PickImageTab1();
                     return pickImageTab;
                 case 1:
-                    return new MorphResultTab2();
+                    displayTab = new MorphResultTab2();
+                    return displayTab;
                 default:
                     return null;
             }
@@ -108,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     // tabs for picking images and drawing lines
     private PickImageTab1 pickImageTab;
+    private MorphResultTab2 displayTab;
 
     /** open image picker */
     public void openImageClick(View view) {
@@ -132,14 +135,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode != RESULT_OK)
+         if(resultCode != RESULT_OK)
             return;
         try {
             Bitmap immuBitmap = BitmapFactory.decodeStream(
                     getContentResolver().openInputStream(data.getData()));
             pickImageTab.onPickImgResult(immuBitmap, requestCode);
 
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /** radio button selection change event */
@@ -158,5 +163,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public void browseMorphResult(List<Bitmap> bitmaps) {
         // parse result to tab2 gallery
+        if (bitmaps == null || bitmaps.size() == 0)
+            return;
+        displayTab.displayImages(bitmaps);
+        mViewPager.setCurrentItem(1);
     }
 }

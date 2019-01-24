@@ -38,27 +38,27 @@
             android:onClick="openImageClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="OPen Dest Image"/>
+            android:text="OPen Dst Image"/>
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <RadioButton
                 android:id="@+id/drawRadio"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:checked="true"
                 android:onClick="lineEditModeSelect"
                 android:text="Draw Line"/>
             <RadioButton
                 android:id="@+id/editRadio"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:onClick="lineEditModeSelect"
                 android:text="Edit Line"/>
             <RadioButton
                 android:id="@+id/deleteRadio"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:onClick="lineEditModeSelect"
                 android:text="Remove Line"/>
         </RadioGroup>
@@ -70,7 +70,7 @@
         <EditText
             android:id="@+id/frameNum"
             android:layout_width="match_parent"
-            android:inputType="numberPassword"
+            android:inputType="number"
             android:layout_height="50dp" />
         <Button
             android:id="@+id/morphBtn"
