@@ -134,6 +134,9 @@ public class PickImageTab1 extends Fragment {
 
                     images = ImageMorph.drawIntermediateFrames(frames, strImgView.getImageBitmap(),
                             endImgView.getImageBitmap(), strImgView.getDrawnLines(), endImgView.getDrawnLines());
+                    // add two source images
+                    images.add(endImgView.getImageBitmap());
+                    images.add(0, strImgView.getImageBitmap());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

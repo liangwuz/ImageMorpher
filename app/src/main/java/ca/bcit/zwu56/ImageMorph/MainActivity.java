@@ -3,6 +3,7 @@ package ca.bcit.zwu56.ImageMorph;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -167,5 +170,24 @@ public class MainActivity extends AppCompatActivity {
             return;
         displayTab.displayImages(bitmaps);
         mViewPager.setCurrentItem(1);
+    }
+
+    /** start auto result images flipping */
+    public void flipBtnClick(View view) {
+        Button flipBtn = findViewById(R.id.start_stop_flip_btn);
+        if (flipBtn.getText().toString().equals("START")) {
+            flipBtn.setText("STOP");
+            flipBtn.setTextColor(Color.RED);
+            try {
+                Integer ms = Integer.parseInt(((EditText)findViewById(R.id.flip_gap)).getText().toString());
+                displayTab.startAutoSwipe(ms);
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            flipBtn.setText("START");
+            flipBtn.setTextColor(Color.BLACK);
+            displayTab.stopAutoSwipe();
+        }
     }
 }

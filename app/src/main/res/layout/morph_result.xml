@@ -2,9 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
-    <ImageView
-        android:id="@+id/display_image"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <ViewFlipper
+        android:id="@+id/images_flipper"
+        android:layout_weight=".9"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:autoStart="false">
+    </ViewFlipper>
+    <LinearLayout
+        android:layout_weight=".1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:text="Auto Swipe Time (ms)"/>
+        <EditText
+            android:id="@+id/flip_gap"
+            android:layout_width="match_parent"
+            android:inputType="number"
+            android:layout_height="50dp"
+            android:text="1000"/>
+        <Button
+            android:id="@+id/start_stop_flip_btn"
+            android:onClick="flipBtnClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="START"/>
+    </LinearLayout>
+
 </LinearLayout>
