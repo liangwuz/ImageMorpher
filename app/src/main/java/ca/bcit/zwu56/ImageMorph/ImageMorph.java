@@ -172,13 +172,13 @@ class ImageMorph {
     static List<Bitmap> drawIntermediateFrames(int numOfFrame, Bitmap srcImg, Bitmap dstImg,
                                                       List<Vector> srcLines, List<Vector> dstLines) {
         // x, y coordinates of a point and image size
-        int x,y, width = srcImg.getWidth(), height = srcImg.getHeight();
-        // intermediate lines for mapping pixels
-        List<Vector> intermediateLines =  new ArrayList<>();
+        int width = srcImg.getWidth(), height = srcImg.getHeight();
         // result bitmap container
         List<Bitmap> result = new ArrayList<>();
 
         for (int i = 0; i < numOfFrame; ++i) {
+            // intermediate lines for mapping pixels
+            List<Vector> intermediateLines =  new ArrayList<>();
             // cross resolve weight for the start image and end image
             double dstWeight = 1.0 / (numOfFrame + 1) * (i + 1);
             double srcWeight = 1 - dstWeight;
@@ -194,8 +194,8 @@ class ImageMorph {
                 Vector dstLine = dstLines.get(j);
 
                 // intermediate line start point
-                x = calIntermediateNum(srcLine.strPoint.x, dstLine.strPoint.x, i, numOfFrame);
-                y = calIntermediateNum(srcLine.strPoint.y, dstLine.strPoint.y, i, numOfFrame);
+                float x = calIntermediateNum(srcLine.strPoint.x, dstLine.strPoint.x, i, numOfFrame);
+                float y = calIntermediateNum(srcLine.strPoint.y, dstLine.strPoint.y, i, numOfFrame);
                 Point lineStrPoint = new Point(x, y);
 
                 // intermediate line end point
@@ -210,8 +210,8 @@ class ImageMorph {
             // get corresponding pixel from the end image
             // weight * src pixel + weight * dst pixel fro cross resolve
             // draw the result pixel back to the bitmap
-            for (x = 0; x < width; ++x) {
-                for(y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                for(int y = 0; y < height; ++y) {
                     Point pixelPoint = new Point(x, y); // pixel point to be painted
 //                    Point srcMapPoint = inverseMapping(srcLines, intermediateLines, pixelPoint); // pixel point from start image
 //                    Point dstMapPoint = inverseMapping(dstLines, intermediateLines, pixelPoint);
@@ -249,8 +249,8 @@ class ImageMorph {
     }
 
     // calculate the intermediate coordinate base on the frame index, start and end coordinates
-    private static int calIntermediateNum(float src, float dst, int index, int total) {
-         return Math.round((dst - src) / (total + 1) * (index+1) + src);
+    private static float calIntermediateNum(float src, float dst, int index, int total) {
+         return (dst - src) / (total + 1) * (index+1) + src;
     }
 
     // get the pixel at the specified point, if x, y coordinate is out of bound, it be rounded to the bound.
