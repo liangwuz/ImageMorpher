@@ -97,7 +97,7 @@ class ImageMorph {
 
 
     private static Point srcMapPoint, dstMapPoint;
-    // calculate the mapped point in both start image and end image at the same time suing static variable
+    // calculate the mapped point in both start image and end image at the same time using static variable
     private static void inverseMapping(List<Vector> srcVectors, List<Vector> intermediateVectors,
                                         List<Vector> dstVectors, Point point) {
         int size = srcVectors.size();
@@ -242,7 +242,6 @@ class ImageMorph {
             }
             result.add(bitmap);
         }
-        // gc
         srcMapPoint = null;
         dstMapPoint = null;
         return result;

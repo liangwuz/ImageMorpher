@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MorphResultTab2 extends Fragment {
 
-    ViewFlipper imagesFlipper;
+    private ViewFlipper imagesFlipper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +39,23 @@ public class MorphResultTab2 extends Fragment {
 
         return rootView;
     }
+
+    public void gotoSrcFrame() {
+        imagesFlipper.setDisplayedChild(0);
+    }
+
+    public void gotoDstFrame() {
+        imagesFlipper.setDisplayedChild(imagesFlipper.getChildCount()-1);
+    }
+
+    public void gotoPrevFrame() {
+        imagesFlipper.showPrevious();
+    }
+
+    public void gotoNextFrame() {
+        imagesFlipper.showNext();
+    }
+
 
     /**
      * Display all the images for flipping

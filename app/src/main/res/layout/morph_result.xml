@@ -21,7 +21,7 @@
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Auto Swipe Time (ms)"/>
+        android:text="Slide Show (ms)"/>
         <EditText
             android:id="@+id/flip_gap"
             android:layout_width="match_parent"
@@ -34,6 +34,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="START"/>
+        <Button
+            android:layout_marginTop="10dp"
+            android:id="@+id/to_prev_frame_btn"
+            android:onClick="gotoPrevFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Prev Frame"/>
+        <Button
+            android:id="@+id/to_next_frame_btn"
+            android:onClick="gotoNextFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Next Frame"/>
+        <Button
+            android:id="@+id/to_src_frame_btn"
+            android:onClick="gotoSrcFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="First Frame"/>
+        <Button
+            android:id="@+id/to_dst_frame_btn"
+            android:onClick="gotoDstFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last Frame"/>
     </LinearLayout>
 
 </LinearLayout>

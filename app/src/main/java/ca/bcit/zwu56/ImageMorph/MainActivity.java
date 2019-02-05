@@ -190,4 +190,20 @@ public class MainActivity extends AppCompatActivity {
             displayTab.stopAutoSwipe();
         }
     }
+
+    public void gotoSrcFrame(View view) {
+        displayTab.gotoSrcFrame();
+    }
+
+    public void gotoDstFrame(View view) {
+        displayTab.gotoDstFrame();
+    }
+
+    public void gotoPrevFrame(View view) {
+        displayTab.gotoPrevFrame();
+    }
+
+    public void gotoNextFrame(View view) {
+        displayTab.gotoNextFrame();
+    }
 }
